@@ -30,7 +30,7 @@ public class WxController {
     @RequestMapping("hello")
     public String hello(HttpServletRequest request) {
         String headers =  request.getHeader("user");
-        return "Hello Weixin API test "+headers +" OOK";
+        return "Hello Weixin API test "+headers +" OOOOOK";
     }
 
     //    @RequestMapping(value = "validURL")
