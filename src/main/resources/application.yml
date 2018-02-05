@@ -1,0 +1,15 @@
+spring:
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+server:
+  port: 8089
+  tomcat:
+    uri-encoding: UTF-8
+logging:
+  level: info
+
+
+
