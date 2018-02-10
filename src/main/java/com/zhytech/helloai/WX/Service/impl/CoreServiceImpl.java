@@ -1,17 +1,25 @@
 package com.zhytech.helloai.WX.Service.impl;
 
 import com.zhytech.helloai.Baidu.Service.TsnServiceItfImpl;
+import com.zhytech.helloai.Tuling.Beans.MenuItem;
+import com.zhytech.helloai.Tuling.Beans.TuliingRespone;
 import com.zhytech.helloai.Tuling.Service.TulingService;
+import com.zhytech.helloai.Tuling.Utils.TulingObjectConverter;
 import com.zhytech.helloai.WX.Service.CoreService;
 import com.zhytech.helloai.WX.Utils.MessageUtils;
 import com.zhytech.helloai.WX.Utils.XmlUtils;
+import com.zhytech.helloai.WX.beans.message.resp.Article;
+import com.zhytech.helloai.WX.beans.message.resp.NewsMessageResp;
 import com.zhytech.helloai.WX.beans.message.resp.TextMessageResp;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,9 +58,22 @@ public class CoreServiceImpl implements CoreService{
         logger.info("User Content : " + info+" ; FormUser : "+userid);
         String answer = ts.TulingTalk(info,userid);
         logger.info("Answer : "+answer);
-        String text = this.GetText(answer);
-        logger.info("text: "+text);
-        return replyTextMsg(map, text);
+        TulingObjectConverter tulingObjectConverter = new TulingObjectConverter();
+        TuliingRespone tuliingRespone = tulingObjectConverter.converter(answer);
+        String WxXMLString = null;
+        switch (tuliingRespone.getCode()) {
+            case "100000":
+                String text = tuliingRespone.getText();
+                logger.info("text: "+text);
+
+                WxXMLString = replyTextMsg(map, text);
+            case "308000":
+                WxXMLString = replyNewsMsg(map, tuliingRespone);
+
+        }
+
+        logger.info("Return WxXML : "+WxXMLString);
+        return WxXMLString;
 
     }
 
@@ -96,6 +117,35 @@ public class CoreServiceImpl implements CoreService{
         return XmlUtils.textMessageToXml(textMessageResp);
     }
 
+
+    public String replyNewsMsg(Map<String, String> map, TuliingRespone tuliingRespone) {
+        String fromUserName = map.get("FromUserName");
+        String toUserName = map.get("ToUserName");
+        NewsMessageResp newsMessageResp = new NewsMessageResp();
+        newsMessageResp.setToUserName(fromUserName);
+        newsMessageResp.setFromUserName(toUserName);
+        newsMessageResp.setMsgType(MessageUtils.RESP_MESSAGE_TYPE_NEWS);
+        newsMessageResp.setFuncFlag(0);
+
+        int ArticleCount = tuliingRespone.getList().size();
+        if (ArticleCount > 8) {
+            ArticleCount = 8;
+        }
+        newsMessageResp.setArticleCount(ArticleCount);
+        List<Article> list = new ArrayList<>();
+        for (int i=0;i<ArticleCount;i++){
+            Article articleItem = new Article();
+            MenuItem menuItem = new MenuItem();
+            menuItem = tuliingRespone.getList().get(i);
+            articleItem.setTitle(menuItem.getName());
+            articleItem.setDescription(menuItem.getInfo());
+            articleItem.setPicUrl(menuItem.getIcon());
+            articleItem.setUrl(menuItem.getDetailurl());
+            list.add(articleItem);
+        }
+        newsMessageResp.setArticles(list);
+        return XmlUtils.newsMessageToXml(newsMessageResp);
+    }
 
 
 

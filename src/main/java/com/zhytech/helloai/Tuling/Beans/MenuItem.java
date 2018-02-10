@@ -1,6 +1,7 @@
 package com.zhytech.helloai.Tuling.Beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.context.annotation.Bean;
 
 /**
  * Created by zhy on 2017/3/23.

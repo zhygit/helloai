@@ -31,12 +31,6 @@ public class TulingService {
 //    当前使用的 方法
     public String TulingTalk(String info){
         RestTemplate restTemplate = new RestTemplate();
-//        Map<String, String> params = new HashMap<String, String>();
-//        params.put("key", APIkey);
-//        params.put("info", "?????");
-//        params.put("loc", "??????");
-//        params.put("userid", "12341234");
-
         MultiValueMap<String, String> requestEntity = new LinkedMultiValueMap<String,String>();
         requestEntity.add("key",APIkey);
         requestEntity.add("info",info);
@@ -118,38 +112,48 @@ public class TulingService {
 
 
     public static void main(String args[]){
-        TulingService t1 = new TulingService();
-        TulingService t2 = new TulingService();
-try{
-    String godkick = "你好啊";
-    Integer talkround = 10;
-    String Adam =godkick;
-    String Eve = "";
-    JSONObject ob1 = null;
-    JSONObject ob2 = null;
-    log.info("Talking Start");
-    log.info("=== Round 1 =====");
-    log.info(Adam);
-    for (int i=0;i<talkround;i++){
-        ob1 = new JSONObject(Adam);
-        log.info("Adam : "+ ob1.getString("text"));
-        Eve = t1.TulingTalk(Adam);
 
-        ob2 = new JSONObject(Eve);
-        log.info("Eve : " +ob2.getString("text"));
-        Adam = t2.TulingTalk(Eve);
+        TulingService t = new TulingService();
+        String info = "宫保鸡丁怎么做？";
+        String s = t.TulingTalk(info);
+        log.info("s :"+s);
 
+      String info2 = "人事不干人事？";
+       s = t.TulingTalk(info2);
+      log.info("s :"+s);
 
-
-    }
-    log.info("Goodbye, Guys!");
-}catch (JSONException e) {
-
-            e.printStackTrace();
-
-        }
-
-
+/**********  Test2 ***************/
+//        TulingService t1 = new TulingService();
+//        TulingService t2 = new TulingService();
+//try{
+//    String godkick = "你好啊";
+//    Integer talkround = 10;
+//    String Adam =godkick;
+//    String Eve = "";
+//    JSONObject ob1 = null;
+//    JSONObject ob2 = null;
+//    log.info("Talking Start");
+//    log.info("=== Round 1 =====");
+//    log.info(Adam);
+//    for (int i=0;i<talkround;i++){
+//        ob1 = new JSONObject(Adam);
+//        log.info("Adam : "+ ob1.getString("text"));
+//        Eve = t1.TulingTalk(Adam);
+//
+//        ob2 = new JSONObject(Eve);
+//        log.info("Eve : " +ob2.getString("text"));
+//        Adam = t2.TulingTalk(Eve);
+//
+//
+//
+//    }
+//    log.info("Goodbye, Guys!");
+//}catch (JSONException e) {
+//
+//            e.printStackTrace();
+//
+//        }
+/**********  Test2 ***************/
 
 //****  Test 1   ****//
 //        TulingService t = new TulingService();
