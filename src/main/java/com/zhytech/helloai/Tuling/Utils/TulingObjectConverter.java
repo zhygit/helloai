@@ -2,6 +2,7 @@ package com.zhytech.helloai.Tuling.Utils;
 
 
 import com.zhytech.helloai.Tuling.Beans.MenuItem;
+import com.zhytech.helloai.Tuling.Beans.ResponseItem;
 import com.zhytech.helloai.Tuling.Beans.TuliingRespone;
 import com.zhytech.helloai.WX.Service.impl.CoreServiceImpl;
 import org.json.JSONArray;
@@ -27,34 +28,37 @@ public class TulingObjectConverter {
             JSONObject ob = new JSONObject(str);
             tuliingRespone.setText(ob.getString("text"));
             tuliingRespone.setCode(ob.getString("code"));
-            if(ob.has("url")){
+            if (ob.has("url")) {
                 tuliingRespone.setUrl(ob.getString("url"));
             }
-            switch (tuliingRespone.getCode()) {
-                case "100000":
-                    logger.info("Tuling Return MsgType : "+"100000");
-                    logger.info(tuliingRespone.getText());
-                case "308000":
-                    if (ob.has("list")) {
-                        String menuListString = ob.getString("list");
-                        JSONArray menuList = new JSONArray(menuListString);
-
-                        List<MenuItem> list = new ArrayList<>();
-                        for (int i =0 ;i<menuList.length();i++) {
-                            MenuItem menuItem = new MenuItem();
-                            JSONObject tempObject = menuList.getJSONObject(i);
-                            menuItem.setName(tempObject.getString("name"));
-                            menuItem.setDetailurl(tempObject.getString("detailurl"));
-                            menuItem.setIcon(tempObject.getString("icon"));
-                            menuItem.setInfo(tempObject.getString("info"));
-                            logger.info(menuItem.toString());
-                            list.add(menuItem);
-                        }
-                        tuliingRespone.setList(list);
-
-
-
+            if (ob.has("list")) {
+                String menuListString = ob.getString("list");
+                JSONArray itemList = new JSONArray(menuListString);
+                List<ResponseItem> list = new ArrayList<>();
+                for (int i = 0; i < itemList.length(); i++) {
+                    ResponseItem responseItem = new ResponseItem();
+                    JSONObject tempObject = itemList.getJSONObject(i);
+                    if (tempObject.has("name")) {
+                        responseItem.setName(tempObject.getString("name"));
                     }
+                    if (tempObject.has("article")) {
+                        responseItem.setName(tempObject.getString("article"));
+                    }
+                    if (tempObject.has("info")) {
+                        responseItem.setInfo(tempObject.getString("info"));
+                    }
+                    if (tempObject.has("source")) {
+                        responseItem.setInfo(tempObject.getString("source"));
+                    }
+                    if (tempObject.has("icon")) {
+                        responseItem.setIcon(tempObject.getString("icon"));
+                    }
+                    responseItem.setDetailurl(tempObject.getString("detailurl"));
+                    logger.info(responseItem.toString());
+                    list.add(responseItem);
+                }
+                tuliingRespone.setList(list);
+
             }
 
         } catch (JSONException e) {

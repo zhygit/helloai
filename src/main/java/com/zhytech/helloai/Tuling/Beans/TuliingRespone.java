@@ -16,7 +16,7 @@ public class TuliingRespone {
     private String code;
     private String text;
     private String url;
-    private List<MenuItem> list;
+    private List<ResponseItem> list;
     private Function funciton;
 
     public TuliingRespone() {
@@ -61,11 +61,11 @@ public class TuliingRespone {
         this.url = url;
     }
 
-    public List<MenuItem> getList() {
+    public List<ResponseItem> getList() {
         return list;
     }
 
-    public void setList(List<MenuItem> list) {
+    public void setList(List<ResponseItem> list) {
         this.list = list;
     }
 

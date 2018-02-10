@@ -2,9 +2,11 @@ package com.zhytech.helloai.WX.Service.impl;
 
 import com.zhytech.helloai.Baidu.Service.TsnServiceItfImpl;
 import com.zhytech.helloai.Tuling.Beans.MenuItem;
+import com.zhytech.helloai.Tuling.Beans.ResponseItem;
 import com.zhytech.helloai.Tuling.Beans.TuliingRespone;
 import com.zhytech.helloai.Tuling.Service.TulingService;
 import com.zhytech.helloai.Tuling.Utils.TulingObjectConverter;
+import com.zhytech.helloai.Tuling.Utils.TulingResponeType;
 import com.zhytech.helloai.WX.Service.CoreService;
 import com.zhytech.helloai.WX.Utils.MessageUtils;
 import com.zhytech.helloai.WX.Utils.XmlUtils;
@@ -31,6 +33,7 @@ public class CoreServiceImpl implements CoreService{
     public static Logger logger = LoggerFactory.getLogger(CoreServiceImpl.class);
 
     private TsnServiceItfImpl tsnService;
+
 
     public String processTextMessage(Map<String, String> map) {
         String replyContent = "Hello! This is my Reply! "+ map.get("Content");
@@ -65,11 +68,13 @@ public class CoreServiceImpl implements CoreService{
             case "100000":
                 String text = tuliingRespone.getText();
                 logger.info("text: "+text);
-
                 WxXMLString = replyTextMsg(map, text);
+                break;
             case "308000":
+            case "302000":
+            case "200000":
                 WxXMLString = replyNewsMsg(map, tuliingRespone);
-
+                break;
         }
 
         logger.info("Return WxXML : "+WxXMLString);
@@ -128,22 +133,23 @@ public class CoreServiceImpl implements CoreService{
         newsMessageResp.setFuncFlag(0);
 
         int ArticleCount = tuliingRespone.getList().size();
+        logger.info("Repsone item count : "+ArticleCount);
         if (ArticleCount > 8) {
             ArticleCount = 8;
         }
         newsMessageResp.setArticleCount(ArticleCount);
-        List<Article> list = new ArrayList<>();
+        List<Article> articlelist = new ArrayList<>();
         for (int i=0;i<ArticleCount;i++){
             Article articleItem = new Article();
-            MenuItem menuItem = new MenuItem();
-            menuItem = tuliingRespone.getList().get(i);
-            articleItem.setTitle(menuItem.getName());
-            articleItem.setDescription(menuItem.getInfo());
-            articleItem.setPicUrl(menuItem.getIcon());
-            articleItem.setUrl(menuItem.getDetailurl());
-            list.add(articleItem);
+            ResponseItem responseItem = new ResponseItem();
+            responseItem = tuliingRespone.getList().get(i);
+            articleItem.setTitle(responseItem.getName());
+            articleItem.setDescription(responseItem.getInfo());
+            articleItem.setPicUrl(responseItem.getIcon());
+            articleItem.setUrl(responseItem.getDetailurl());
+            articlelist.add(articleItem);
         }
-        newsMessageResp.setArticles(list);
+        newsMessageResp.setArticles(articlelist);
         return XmlUtils.newsMessageToXml(newsMessageResp);
     }
 
